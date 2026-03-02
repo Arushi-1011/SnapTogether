@@ -30,8 +30,8 @@ captureBtn.addEventListener('click', () => {
 });
 
 function capturePhoto() {
-    const padding = 40;        // side padding
-    const bottomSpace = 80;    // extra space for caption
+    const padding = 40;
+    const bottomSpace = 90;
 
     const width = video.videoWidth;
     const height = video.videoHeight;
@@ -41,21 +41,31 @@ function capturePhoto() {
 
     const context = canvas.getContext('2d');
 
-    // Draw white polaroid background
+    // White polaroid background
     context.fillStyle = "white";
     context.fillRect(0, 0, canvas.width, canvas.height);
 
-    // Draw photo inside frame
+    // Draw photo
     context.drawImage(video, padding, padding, width, height);
 
-    // Optional caption text
-    context.fillStyle = "#555";
-    context.font = "20px Poppins";
+    // Caption
+    const caption = captionInput.value || "SnapTogether 💕";
+    context.fillStyle = "#444";
+    context.font = "22px Poppins";
     context.textAlign = "center";
-    context.fillText("SnapTogether 💕", canvas.width / 2, canvas.height - 40);
+    context.fillText(caption, canvas.width / 2, canvas.height - 40);
 
+    // Convert to image
     const imageData = canvas.toDataURL("image/png");
 
+    // Hide camera
+    video.style.display = "none";
+
+    // Show polaroid
+    canvas.style.display = "block";
+    canvas.style.marginTop = "20px";
+
+    // Show download button
     downloadLink.href = imageData;
     downloadLink.download = "snaptogether-polaroid.png";
     downloadLink.innerText = "Download Photo";
