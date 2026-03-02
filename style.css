@@ -1,59 +1,112 @@
-body {
+/* Reset */
+* {
     margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Body Background */
+body {
     font-family: 'Poppins', sans-serif;
     background: linear-gradient(135deg, #fbc2eb, #a6c1ee);
+    height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
 }
 
+/* Main Container */
 .container {
     text-align: center;
 }
 
+/* Title */
+h1 {
+    font-size: 2.2rem;
+    margin-bottom: 25px;
+    color: #222;
+}
+
+/* Camera Box */
 .camera-box {
     position: relative;
-    width: 400px;
-    border-radius: 20px;
+    width: 420px;
+    border-radius: 25px;
     overflow: hidden;
-    box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+    background: black;
 }
 
+/* Video */
 video {
     width: 100%;
+    display: block;
+    border-radius: 25px;
 }
 
+/* Countdown Overlay */
 #countdown {
     position: absolute;
     top: 40%;
-    left: 45%;
-    font-size: 4rem;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 5rem;
     color: white;
     font-weight: bold;
+    text-shadow: 0 0 20px rgba(0,0,0,0.6);
 }
 
+/* Caption Input */
+input {
+    margin-top: 18px;
+    padding: 10px 18px;
+    width: 250px;
+    border-radius: 25px;
+    border: none;
+    outline: none;
+    text-align: center;
+    font-size: 0.95rem;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+}
+
+/* Take Photo Button */
 button {
-    margin-top: 20px;
-    padding: 12px 25px;
+    margin-top: 22px;
+    padding: 12px 28px;
     border: none;
     border-radius: 30px;
-    background: #ff6ec4;
+    background: linear-gradient(135deg, #ff6ec4, #7873f5);
     color: white;
     font-size: 1rem;
     cursor: pointer;
-    transition: 0.3s;
-}
-a {
-    display: block;
-    margin-top: 20px;
-    color: white;
-    text-decoration: none;
-    font-weight: bold;
+    transition: all 0.3s ease;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.2);
 }
 
 button:hover {
-    background: #7873f5;
+    transform: translateY(-3px);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.25);
 }
-canvas.style.display = "block";
-canvas.style.marginTop = "20px";
+
+/* Download Link */
+a {
+    display: none;
+    margin-top: 18px;
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 1rem;
+}
+
+/* Polaroid Canvas */
+canvas {
+    display: none;
+    margin: 25px auto 0;
+    box-shadow: 0 30px 60px rgba(0,0,0,0.35);
+    border-radius: 12px;
+    transition: transform 0.3s ease, opacity 0.4s ease;
+}
+
+canvas:hover {
+    transform: scale(1.02) rotate(-1deg);
+}
