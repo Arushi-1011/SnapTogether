@@ -44,6 +44,13 @@ button {
     cursor: pointer;
     transition: 0.3s;
 }
+a {
+    display: block;
+    margin-top: 20px;
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+}
 
 button:hover {
     background: #7873f5;
