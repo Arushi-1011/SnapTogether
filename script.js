@@ -14,7 +14,7 @@ navigator.mediaDevices.getUserMedia({ video: true })
         console.error("Camera error:", error);
     });
 
-// Button click
+// Countdown
 captureBtn.addEventListener('click', () => {
     let count = 3;
     countdownEl.innerText = count;
@@ -41,13 +41,16 @@ function capturePhoto() {
     canvas.width = width + padding * 2;
     canvas.height = height + padding * 2 + bottomSpace;
 
-    const context = canvas.getContext('2d');  // CONTEXT INSIDE FUNCTION
+    const context = canvas.getContext('2d'); // ✅ defined here only
 
+    // White frame
     context.fillStyle = "white";
     context.fillRect(0, 0, canvas.width, canvas.height);
 
+    // Draw image
     context.drawImage(video, padding, padding, width, height);
 
+    // Caption
     const caption = captionInput.value || "SnapTogether 💕";
     context.fillStyle = "#444";
     context.font = "22px Poppins";
@@ -56,9 +59,13 @@ function capturePhoto() {
 
     const imageData = canvas.toDataURL("image/png");
 
+    // Hide video
     video.style.display = "none";
+
+    // Show polaroid
     canvas.style.display = "block";
 
+    // Enable download
     downloadLink.href = imageData;
     downloadLink.download = "snaptogether-polaroid.png";
     downloadLink.innerText = "Download Photo";
