@@ -27,15 +27,34 @@ captureBtn.addEventListener('click', () => {
 });
 
 function capturePhoto() {
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
+    const padding = 40;        // side padding
+    const bottomSpace = 80;    // extra space for caption
+
+    const width = video.videoWidth;
+    const height = video.videoHeight;
+
+    canvas.width = width + padding * 2;
+    canvas.height = height + padding * 2 + bottomSpace;
 
     const context = canvas.getContext('2d');
-    context.drawImage(video, 0, 0);
 
-    const imageData = canvas.toDataURL('image/png');
+    // Draw white polaroid background
+    context.fillStyle = "white";
+    context.fillRect(0, 0, canvas.width, canvas.height);
+
+    // Draw photo inside frame
+    context.drawImage(video, padding, padding, width, height);
+
+    // Optional caption text
+    context.fillStyle = "#555";
+    context.font = "20px Poppins";
+    context.textAlign = "center";
+    context.fillText("SnapTogether 💕", canvas.width / 2, canvas.height - 40);
+
+    const imageData = canvas.toDataURL("image/png");
+
     downloadLink.href = imageData;
-    downloadLink.download = "snaptogether.png";
+    downloadLink.download = "snaptogether-polaroid.png";
     downloadLink.innerText = "Download Photo";
     downloadLink.style.display = "block";
 }
