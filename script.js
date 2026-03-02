@@ -3,6 +3,9 @@ const canvas = document.getElementById('canvas');
 const captureBtn = document.getElementById('captureBtn');
 const downloadLink = document.getElementById('downloadLink');
 const countdownEl = document.getElementById('countdown');
+const captionInput = document.getElementById("captionInput");
+
+context.fillText(captionInput.value || "SnapTogether 💕", canvas.width / 2, canvas.height - 40);
 
 // Access webcam
 navigator.mediaDevices.getUserMedia({ video: true })
