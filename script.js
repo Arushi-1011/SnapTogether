@@ -4,6 +4,7 @@ const captureBtn = document.getElementById('captureBtn');
 const downloadLink = document.getElementById('downloadLink');
 const countdownEl = document.getElementById('countdown');
 const captionInput = document.getElementById('captionInput');
+const retakeBtn = document.getElementById('retakeBtn');
 
 // Start webcam
 navigator.mediaDevices.getUserMedia({ video: true })
@@ -41,7 +42,7 @@ function capturePhoto() {
     canvas.width = width + padding * 2;
     canvas.height = height + padding * 2 + bottomSpace;
 
-    const context = canvas.getContext('2d'); // ✅ defined here only
+    const context = canvas.getContext('2d');
 
     // White frame
     context.fillStyle = "white";
@@ -57,17 +58,30 @@ function capturePhoto() {
     context.textAlign = "center";
     context.fillText(caption, canvas.width / 2, canvas.height - 40);
 
+    // Flash effect
+    const flash = document.getElementById("flash");
+    flash.style.opacity = "1";
+    setTimeout(() => {
+        flash.style.opacity = "0";
+    }, 150);
+
     const imageData = canvas.toDataURL("image/png");
 
-    // Hide video
     video.style.display = "none";
-
-    // Show polaroid
     canvas.style.display = "block";
 
-    // Enable download
     downloadLink.href = imageData;
     downloadLink.download = "snaptogether-polaroid.png";
     downloadLink.innerText = "Download Photo";
     downloadLink.style.display = "block";
+
+    retakeBtn.style.display = "inline-block";
 }
+
+// Retake logic (OUTSIDE function)
+retakeBtn.addEventListener("click", () => {
+    canvas.style.display = "none";
+    video.style.display = "block";
+    downloadLink.style.display = "none";
+    retakeBtn.style.display = "none";
+});
