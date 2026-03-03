@@ -59,11 +59,15 @@ function capturePhoto() {
     context.fillText(caption, canvas.width / 2, canvas.height - 40);
 
     // Flash effect
-    const flash = document.getElementById("flash");
-    flash.style.opacity = "1";
-    setTimeout(() => {
-        flash.style.opacity = "0";
-    }, 150);
+   const flash = document.getElementById("flash");
+
+flash.style.transition = "none";
+flash.style.opacity = "1";
+
+setTimeout(() => {
+    flash.style.transition = "opacity 0.3s ease";
+    flash.style.opacity = "0";
+}, 50);
 
     const imageData = canvas.toDataURL("image/png");
 
