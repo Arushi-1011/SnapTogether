@@ -119,6 +119,8 @@ canvas:hover {
     background: white;
     opacity: 0;
     pointer-events: none;
+    z-index: 10;
+    transition: opacity 0.15s ease;
 }
 #retakeBtn {
     margin-top: 15px;
