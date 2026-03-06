@@ -3,27 +3,41 @@
 <head>
     <title>SnapTogether 📸</title>
     <link rel="stylesheet" href="style.css">
-    <input type="text" id="captionInput" placeholder="Write something cute..." />
     <link rel="icon" href="data:,">
 </head>
+
 <body>
 
-    <div class="container">
-        <h1>SnapTogether 📸</h1>
+<div class="container">
+    <h1>SnapTogether 📸</h1>
 
-        <div class="camera-box">
-            <video id="video" autoplay></video>
-            <div id="countdown"></div>
-            <div id="flash"></div>
-        </div>
-
-        <button id="captureBtn">Take Photo</button>
-        <a id="downloadLink"></a>
-        <button id="retakeBtn" style="display:none;">Retake</button>
+    <div class="camera-box">
+        <video id="video" autoplay></video>
+        <div id="countdown"></div>
+        <div id="flash"></div>
     </div>
 
-    <canvas id="canvas" style="display:none;"></canvas>
+    <!-- Caption input -->
+    <input type="text" id="captionInput" placeholder="Write something cute..." />
 
-    <script src="script.js"></script>
+    <!-- Filters -->
+    <div class="filters">
+        <button onclick="setFilter('none')">Normal</button>
+        <button onclick="setFilter('grayscale(100%)')">B&W</button>
+        <button onclick="setFilter('sepia(80%)')">Vintage</button>
+        <button onclick="setFilter('contrast(150%)')">Pop</button>
+    </div>
+
+    <button id="captureBtn">Take Photo</button>
+
+    <a id="downloadLink"></a>
+
+    <button id="retakeBtn" style="display:none;">Retake</button>
+</div>
+
+<canvas id="canvas" style="display:none;"></canvas>
+
+<script src="script.js"></script>
+
 </body>
 </html>
