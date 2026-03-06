@@ -132,6 +132,17 @@ canvas:hover {
     cursor: pointer;
     transition: 0.3s;
 }
+.filters {
+    margin-top: 15px;
+}
+
+.filters button {
+    margin: 5px;
+    padding: 6px 12px;
+    border-radius: 20px;
+    border: none;
+    cursor: pointer;
+}
 
 #retakeBtn:hover {
     background: #222;
