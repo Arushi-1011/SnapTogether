@@ -1,3 +1,4 @@
+// Elements
 const video = document.getElementById('video');
 const canvas = document.getElementById('canvas');
 const captureBtn = document.getElementById('captureBtn');
@@ -15,24 +16,34 @@ navigator.mediaDevices.getUserMedia({ video: true })
         console.error("Camera error:", error);
     });
 
-// Countdown
+
+// Take photo button → start countdown
 captureBtn.addEventListener('click', () => {
+
     let count = 3;
     countdownEl.innerText = count;
 
     const interval = setInterval(() => {
+
         count--;
+
         if (count > 0) {
             countdownEl.innerText = count;
-        } else {
+        } 
+        else {
             clearInterval(interval);
             countdownEl.innerText = "";
             capturePhoto();
         }
+
     }, 1000);
+
 });
 
+
+// Capture photo
 function capturePhoto() {
+
     const padding = 40;
     const bottomSpace = 90;
 
@@ -44,53 +55,67 @@ function capturePhoto() {
 
     const context = canvas.getContext('2d');
 
-    // White frame
+    // Polaroid background
     context.fillStyle = "white";
     context.fillRect(0, 0, canvas.width, canvas.height);
 
-    // Draw image
+    // Apply filter to photo
     context.filter = video.style.filter;
+
+    // Draw camera image
     context.drawImage(video, padding, padding, width, height);
+
+    // Reset filter
     context.filter = "none";
 
     // Caption
     const caption = captionInput.value || "SnapTogether 💕";
+
     context.fillStyle = "#444";
     context.font = "22px Poppins";
     context.textAlign = "center";
-    context.fillText(caption, canvas.width / 2, canvas.height - 40);
 
-    // Flash effect
-   const flash = document.getElementById("flash");
+    context.fillText(
+        caption,
+        canvas.width / 2,
+        canvas.height - 40
+    );
 
-flash.style.transition = "none";
-flash.style.opacity = "1";
-
-setTimeout(() => {
-    flash.style.transition = "opacity 0.3s ease";
-    flash.style.opacity = "0";
-}, 50);
-
+    // Convert to image
     const imageData = canvas.toDataURL("image/png");
 
+    // Hide camera
     video.style.display = "none";
+
+    // Show polaroid
     canvas.style.display = "block";
 
+    // Enable download
     downloadLink.href = imageData;
     downloadLink.download = "snaptogether-polaroid.png";
     downloadLink.innerText = "Download Photo";
     downloadLink.style.display = "block";
 
+    // Show retake
     retakeBtn.style.display = "inline-block";
 }
 
-// Retake logic (OUTSIDE function)
+
+// Retake photo
 retakeBtn.addEventListener("click", () => {
+
     canvas.style.display = "none";
     video.style.display = "block";
+
     downloadLink.style.display = "none";
     retakeBtn.style.display = "none";
+
 });
+
+
+// Filters
 function setFilter(filter) {
+
     video.style.filter = filter;
+
 }
