@@ -49,7 +49,9 @@ function capturePhoto() {
     context.fillRect(0, 0, canvas.width, canvas.height);
 
     // Draw image
+    context.filter = video.style.filter;
     context.drawImage(video, padding, padding, width, height);
+    context.filter = "none";
 
     // Caption
     const caption = captionInput.value || "SnapTogether 💕";
@@ -89,3 +91,6 @@ retakeBtn.addEventListener("click", () => {
     downloadLink.style.display = "none";
     retakeBtn.style.display = "none";
 });
+function setFilter(filter) {
+    video.style.filter = filter;
+}
