@@ -52,6 +52,10 @@
     <header class="booth-header">
       <div class="booth-title">📸 SnapTogether</div>
       <div class="booth-meta">
+        <span id="connStatus" class="conn-status">
+          <span class="conn-dot"></span>
+          <span id="connLabel">connecting…</span>
+        </span>
         <span id="roomBadge" class="room-badge"></span>
         <button class="btn-icon" id="leaveBtn" title="Leave booth">✕</button>
       </div>
@@ -148,6 +152,7 @@
     </div>
   </div>
 
+  <div id="toast" class="toast" aria-live="polite"></div>
   <canvas id="captureCanvas" style="display:none;"></canvas>
   <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
   <script src="script.js"></script>
