@@ -1,43 +1,155 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>SnapTogether 📸</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="icon" href="data:,">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SnapTogether 📸</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Geist:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
 
-<div class="container">
-    <h1>SnapTogether 📸</h1>
-
-    <div class="camera-box">
-        <video id="video" autoplay></video>
-        <div id="countdown"></div>
-        <div id="flash"></div>
+  <!-- Lobby Screen -->
+  <div id="lobby" class="screen active">
+    <div class="lobby-inner">
+      <div class="logo">
+        <span class="logo-icon">📸</span>
+        <h1>Snap<em>Together</em></h1>
+        <p class="tagline">a photobooth for besties, no matter the distance</p>
+      </div>
+      <div class="lobby-card">
+        <div class="lobby-tabs">
+          <button class="tab-btn active" data-tab="create">Create Room</button>
+          <button class="tab-btn" data-tab="join">Join Room</button>
+        </div>
+        <div id="tab-create" class="tab-panel active">
+          <p class="hint">Start a booth & share the code with your bestie ✨</p>
+          <input type="text" id="yourNameCreate" placeholder="Your name..." maxlength="20"/>
+          <button class="btn-primary" id="createRoomBtn">Open the Booth</button>
+          <div id="roomCodeDisplay" class="room-code-box hidden">
+            <span class="room-code-label">Your room code</span>
+            <span id="roomCodeText" class="room-code-value"></span>
+            <button class="btn-copy" id="copyCodeBtn">Copy</button>
+          </div>
+          <p id="waitingMsg" class="waiting-msg hidden">Waiting for your bestie to join… 🌸</p>
+        </div>
+        <div id="tab-join" class="tab-panel">
+          <p class="hint">Got a code? Jump into the booth! 💌</p>
+          <input type="text" id="yourNameJoin" placeholder="Your name..." maxlength="20"/>
+          <input type="text" id="joinCodeInput" placeholder="Enter room code..." maxlength="20"/>
+          <button class="btn-primary" id="joinRoomBtn">Join the Booth</button>
+        </div>
+        <p id="lobbyStatus" class="lobby-status"></p>
+      </div>
+      <p class="solo-link">Just here alone? <button class="link-btn" id="soloBtn">Use solo mode →</button></p>
     </div>
+  </div>
 
-    <!-- Caption input -->
-    <input type="text" id="captionInput" placeholder="Write something cute..." />
+  <!-- Booth Screen -->
+  <div id="booth" class="screen">
+    <header class="booth-header">
+      <div class="booth-title">📸 SnapTogether</div>
+      <div class="booth-meta">
+        <span id="roomBadge" class="room-badge"></span>
+        <button class="btn-icon" id="leaveBtn" title="Leave booth">✕</button>
+      </div>
+    </header>
 
-    <!-- Filters -->
-    <div class="filters">
-        <button onclick="setFilter('none')">Normal</button>
-        <button onclick="setFilter('grayscale(100%)')">B&W</button>
-        <button onclick="setFilter('sepia(80%)')">Vintage</button>
-        <button onclick="setFilter('contrast(150%)')">Pop</button>
+    <main class="booth-main">
+
+      <!-- Left: local camera -->
+      <div class="cam-column">
+        <div class="cam-label" id="myLabel">You</div>
+        <div class="cam-wrap" id="myCamWrap">
+          <video id="localVideo" autoplay muted playsinline></video>
+          <div id="localCountdown" class="countdown-overlay"></div>
+          <div id="localFlash" class="flash-overlay"></div>
+          <div class="sticker-layer" id="localStickers"></div>
+        </div>
+      </div>
+
+      <!-- Center: controls -->
+      <div class="controls-column">
+
+        <div class="filter-group">
+          <p class="control-label">Filter</p>
+          <div class="filter-pills">
+            <button class="filter-pill active" data-filter="none">Normal</button>
+            <button class="filter-pill" data-filter="grayscale(100%)">B&W</button>
+            <button class="filter-pill" data-filter="sepia(80%)">Vintage</button>
+            <button class="filter-pill" data-filter="contrast(150%) saturate(130%)">Pop</button>
+            <button class="filter-pill" data-filter="hue-rotate(180deg) saturate(150%)">Dream</button>
+            <button class="filter-pill" data-filter="brightness(1.1) contrast(90%) saturate(0.5)">Soft</button>
+          </div>
+        </div>
+
+        <div class="sticker-group">
+          <p class="control-label">Stickers</p>
+          <div class="sticker-palette">
+            <button class="sticker-btn" data-sticker="🌸">🌸</button>
+            <button class="sticker-btn" data-sticker="⭐">⭐</button>
+            <button class="sticker-btn" data-sticker="💕">💕</button>
+            <button class="sticker-btn" data-sticker="🌙">🌙</button>
+            <button class="sticker-btn" data-sticker="✨">✨</button>
+            <button class="sticker-btn" data-sticker="🦋">🦋</button>
+            <button class="sticker-btn" data-sticker="🌈">🌈</button>
+            <button class="sticker-btn" data-sticker="🎀">🎀</button>
+          </div>
+          <button class="btn-ghost btn-sm" id="clearStickersBtn">Clear stickers</button>
+        </div>
+
+        <div class="caption-group">
+          <p class="control-label">Caption</p>
+          <input type="text" id="captionInput" placeholder="Write something cute…" maxlength="60"/>
+        </div>
+
+        <div class="strip-info">
+          <p class="control-label">Strip mode</p>
+          <p class="strip-desc">Takes <strong>3 photos</strong> with 3-second gaps. Creates a classic photobooth strip!</p>
+        </div>
+
+        <button class="btn-shutter" id="captureBtn">
+          <span class="shutter-icon">◉</span>
+          <span>Take Strip</span>
+        </button>
+        <p id="captureStatus" class="capture-status"></p>
+      </div>
+
+      <!-- Right: remote camera -->
+      <div class="cam-column">
+        <div class="cam-label" id="remoteLabel">Bestie</div>
+        <div class="cam-wrap" id="remoteCamWrap">
+          <video id="remoteVideo" autoplay playsinline></video>
+          <div id="remoteCountdown" class="countdown-overlay"></div>
+          <div id="remoteFlash" class="flash-overlay"></div>
+          <div class="sticker-layer" id="remoteStickers"></div>
+          <div id="noRemote" class="no-remote">
+            <span>Waiting for<br>your bestie…</span>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- Strip Result Screen -->
+  <div id="result" class="screen">
+    <div class="result-inner">
+      <h2 class="result-title">Your Strip 💕</h2>
+      <div class="strip-frame">
+        <canvas id="stripCanvas"></canvas>
+      </div>
+      <div class="result-actions">
+        <a id="downloadBtn" class="btn-primary" download="snaptogether-strip.png">⬇ Download Strip</a>
+        <button class="btn-ghost" id="retakeBtn">Take Another</button>
+      </div>
     </div>
+  </div>
 
-    <button id="captureBtn">Take Photo</button>
-
-    <a id="downloadLink"></a>
-
-    <button id="retakeBtn" style="display:none;">Retake</button>
-</div>
-
-<canvas id="canvas" style="display:none;"></canvas>
-
-<script src="script.js"></script>
-
+  <canvas id="captureCanvas" style="display:none;"></canvas>
+  <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
