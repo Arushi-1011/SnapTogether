@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>SnapTogether 📸</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -11,7 +11,7 @@
 </head>
 <body>
 
-  <!-- Lobby Screen -->
+  <!-- ── Lobby ── -->
   <div id="lobby" class="screen active">
     <div class="lobby-inner">
       <div class="logo">
@@ -26,19 +26,19 @@
         </div>
         <div id="tab-create" class="tab-panel active">
           <p class="hint">Start a booth & share the code with your bestie ✨</p>
-          <input type="text" id="yourNameCreate" placeholder="Your name..." maxlength="20"/>
+          <input type="text" id="yourNameCreate" placeholder="Your name…" maxlength="20"/>
           <button class="btn-primary" id="createRoomBtn">Open the Booth</button>
           <div id="roomCodeDisplay" class="room-code-box hidden">
-            <span class="room-code-label">Your room code</span>
+            <span class="room-code-label">Room code</span>
             <span id="roomCodeText" class="room-code-value"></span>
             <button class="btn-copy" id="copyCodeBtn">Copy</button>
           </div>
-          <p id="waitingMsg" class="waiting-msg hidden">Waiting for your bestie to join… 🌸</p>
+          <p id="waitingMsg" class="waiting-msg hidden">Waiting for your bestie… 🌸</p>
         </div>
         <div id="tab-join" class="tab-panel">
-          <p class="hint">Got a code? Jump into the booth! 💌</p>
-          <input type="text" id="yourNameJoin" placeholder="Your name..." maxlength="20"/>
-          <input type="text" id="joinCodeInput" placeholder="Enter room code..." maxlength="20"/>
+          <p class="hint">Got a code? Jump in! 💌</p>
+          <input type="text" id="yourNameJoin" placeholder="Your name…" maxlength="20"/>
+          <input type="text" id="joinCodeInput" placeholder="Enter room code…" maxlength="20"/>
           <button class="btn-primary" id="joinRoomBtn">Join the Booth</button>
         </div>
         <p id="lobbyStatus" class="lobby-status"></p>
@@ -47,35 +47,37 @@
     </div>
   </div>
 
-  <!-- Booth Screen -->
+  <!-- ── Booth ── -->
   <div id="booth" class="screen">
     <header class="booth-header">
       <div class="booth-title">📸 SnapTogether</div>
       <div class="booth-meta">
-        <span id="connStatus" class="conn-status">
+        <span id="connStatus" class="conn-status waiting">
           <span class="conn-dot"></span>
           <span id="connLabel">connecting…</span>
         </span>
         <span id="roomBadge" class="room-badge"></span>
-        <button class="btn-icon" id="leaveBtn" title="Leave booth">✕</button>
+        <button class="btn-icon" id="leaveBtn" title="Leave">✕</button>
       </div>
     </header>
 
     <main class="booth-main">
 
-      <!-- Left: local camera -->
-      <div class="cam-column">
-        <div class="cam-label" id="myLabel">You</div>
-        <div class="cam-wrap" id="myCamWrap">
-          <video id="localVideo" autoplay muted playsinline></video>
-          <div id="localCountdown" class="countdown-overlay"></div>
-          <div id="localFlash" class="flash-overlay"></div>
-          <div class="sticker-layer" id="localStickers"></div>
+      <!-- Composite preview canvas (the "shared room") -->
+      <div class="preview-column">
+        <div class="preview-wrap" id="previewWrap">
+          <canvas id="previewCanvas"></canvas>
+          <div id="countdownOverlay" class="countdown-overlay"></div>
+          <div id="flashOverlay" class="flash-overlay"></div>
+        </div>
+        <div class="preview-labels">
+          <span id="myLabel" class="preview-name">You</span>
+          <span id="remoteLabel" class="preview-name">Bestie</span>
         </div>
       </div>
 
-      <!-- Center: controls -->
-      <div class="controls-column">
+      <!-- Controls -->
+      <aside class="controls-column">
 
         <div class="filter-group">
           <p class="control-label">Filter</p>
@@ -101,7 +103,7 @@
             <button class="sticker-btn" data-sticker="🌈">🌈</button>
             <button class="sticker-btn" data-sticker="🎀">🎀</button>
           </div>
-          <button class="btn-ghost btn-sm" id="clearStickersBtn">Clear stickers</button>
+          <button class="btn-ghost btn-sm" id="clearStickersBtn">Clear</button>
         </div>
 
         <div class="caption-group">
@@ -110,35 +112,21 @@
         </div>
 
         <div class="strip-info">
-          <p class="control-label">Strip mode</p>
-          <p class="strip-desc">Takes <strong>3 photos</strong> with 3-second gaps. Creates a classic photobooth strip!</p>
+          <p class="control-label">Strip</p>
+          <p class="strip-desc">3 photos, together in one frame — like a real booth.</p>
         </div>
 
-        <button class="btn-shutter" id="captureBtn">
+        <button class="btn-shutter" id="captureBtn" disabled>
           <span class="shutter-icon">◉</span>
           <span>Take Strip</span>
         </button>
         <p id="captureStatus" class="capture-status"></p>
-      </div>
 
-      <!-- Right: remote camera -->
-      <div class="cam-column">
-        <div class="cam-label" id="remoteLabel">Bestie</div>
-        <div class="cam-wrap" id="remoteCamWrap">
-          <video id="remoteVideo" autoplay playsinline></video>
-          <div id="remoteCountdown" class="countdown-overlay"></div>
-          <div id="remoteFlash" class="flash-overlay"></div>
-          <div class="sticker-layer" id="remoteStickers"></div>
-          <div id="noRemote" class="no-remote">
-            <span>Waiting for<br>your bestie…</span>
-          </div>
-        </div>
-      </div>
-
+      </aside>
     </main>
   </div>
 
-  <!-- Strip Result Screen -->
+  <!-- ── Result ── -->
   <div id="result" class="screen">
     <div class="result-inner">
       <h2 class="result-title">Your Strip 💕</h2>
@@ -146,14 +134,19 @@
         <canvas id="stripCanvas"></canvas>
       </div>
       <div class="result-actions">
-        <a id="downloadBtn" class="btn-primary" download="snaptogether-strip.png">⬇ Download Strip</a>
+        <a id="downloadBtn" class="btn-primary" download="snaptogether-strip.png">⬇ Download</a>
         <button class="btn-ghost" id="retakeBtn">Take Another</button>
       </div>
     </div>
   </div>
 
+  <!-- Hidden video elements — sources for canvas compositing -->
+  <video id="localVideo"  autoplay muted playsinline style="display:none"></video>
+  <video id="remoteVideo" autoplay       playsinline style="display:none"></video>
+
   <div id="toast" class="toast" aria-live="polite"></div>
   <canvas id="captureCanvas" style="display:none;"></canvas>
+
   <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
   <script src="script.js"></script>
 </body>
