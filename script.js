@@ -187,42 +187,21 @@ function drawPlaceholder(ctx, x, y, w, h, label) {
 
 function drawBoothFrame(ctx) {
   const w = FULL_W, h = FULL_H;
-  const ins = FRAME_INSET;
 
   ctx.save();
 
-  // Outer rounded rect border
-  ctx.strokeStyle = FRAME_COLOR;
-  ctx.lineWidth = 4;
-  ctx.globalAlpha = 0.85;
-  roundRect(ctx, ins, ins, w - ins * 2, h - ins * 2, CORNER_R);
-  ctx.stroke();
+  // Soft vignette over the whole frame — unifies the two halves into one lit space
+  const vignette = ctx.createRadialGradient(w/2, h/2, h * 0.28, w/2, h/2, w * 0.72);
+  vignette.addColorStop(0, 'rgba(0,0,0,0)');
+  vignette.addColorStop(1, 'rgba(0,0,0,0.3)');
+  ctx.fillStyle = vignette;
+  ctx.fillRect(0, 0, w, h);
 
-  // Centre divider line
-  ctx.lineWidth = DIVIDER_W;
-  ctx.globalAlpha = 0.55;
-  ctx.beginPath();
-  ctx.moveTo(w / 2, ins + 6);
-  ctx.lineTo(w / 2, h - ins - 6);
+  // Single thin outer border — the only frame element
+  ctx.strokeStyle = 'rgba(255,255,255,0.65)';
+  ctx.lineWidth = 2.5;
+  roundRect(ctx, 6, 6, w - 12, h - 12, 8);
   ctx.stroke();
-
-  // Corner tick marks (cute detail)
-  ctx.lineWidth = 3;
-  ctx.globalAlpha = 0.5;
-  const tick = 14;
-  const corners = [
-    [ins, ins],
-    [w - ins, ins],
-    [ins, h - ins],
-    [w - ins, h - ins],
-  ];
-  corners.forEach(([cx, cy]) => {
-    ctx.beginPath();
-    ctx.moveTo(cx + (cx < w / 2 ? tick : -tick), cy);
-    ctx.lineTo(cx, cy);
-    ctx.lineTo(cx, cy + (cy < h / 2 ? tick : -tick));
-    ctx.stroke();
-  });
 
   ctx.restore();
 }
@@ -449,29 +428,18 @@ function captureComposite() {
     ctx.fillText(s.emoji, s.x * FULL_W, s.y * FULL_H);
   });
 
-  // Frame — fully opaque this time
+  // Vignette + single thin border (same as live preview)
+  const w = FULL_W, h = FULL_H;
   ctx.save();
-  const ins = FRAME_INSET, w = FULL_W, h = FULL_H;
-  ctx.strokeStyle = FRAME_COLOR;
-  ctx.lineWidth = 4;
-  roundRect(ctx, ins, ins, w - ins * 2, h - ins * 2, CORNER_R);
+  const vignette = ctx.createRadialGradient(w/2, h/2, h * 0.28, w/2, h/2, w * 0.72);
+  vignette.addColorStop(0, 'rgba(0,0,0,0)');
+  vignette.addColorStop(1, 'rgba(0,0,0,0.3)');
+  ctx.fillStyle = vignette;
+  ctx.fillRect(0, 0, w, h);
+  ctx.strokeStyle = 'rgba(255,255,255,0.65)';
+  ctx.lineWidth = 2.5;
+  roundRect(ctx, 6, 6, w - 12, h - 12, 8);
   ctx.stroke();
-  ctx.lineWidth = DIVIDER_W;
-  ctx.globalAlpha = 0.7;
-  ctx.beginPath();
-  ctx.moveTo(w / 2, ins + 6);
-  ctx.lineTo(w / 2, h - ins - 6);
-  ctx.stroke();
-  ctx.lineWidth = 3;
-  ctx.globalAlpha = 0.7;
-  const tick = 14;
-  [[ins, ins],[w - ins, ins],[ins, h - ins],[w - ins, h - ins]].forEach(([cx, cy]) => {
-    ctx.beginPath();
-    ctx.moveTo(cx + (cx < w / 2 ? tick : -tick), cy);
-    ctx.lineTo(cx, cy);
-    ctx.lineTo(cx, cy + (cy < h / 2 ? tick : -tick));
-    ctx.stroke();
-  });
   ctx.restore();
 
   return captureCanvas.toDataURL('image/png');
@@ -540,14 +508,12 @@ function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 
 // ── Build photo strip ─────────────────────────────────────────────────────────
 async function buildStrip() {
-  // Each photo is 2:1 wide (landscape, both faces)
-  // Strip is portrait: 3 photos stacked
-  const STRIP_W  = 560;
-  const PAD      = 16;
+  const STRIP_W  = 480;
+  const PAD      = 14;
   const PHOTO_W  = STRIP_W - PAD * 2;
-  const PHOTO_H  = Math.round(PHOTO_W * (FULL_H / FULL_W)); // preserve ratio
-  const GAP      = 12;
-  const BOTTOM   = 60;
+  const PHOTO_H  = Math.round(PHOTO_W * (FULL_H / FULL_W));
+  const GAP      = 4;   // tiny gap — feels like film, not separate boxes
+  const BOTTOM   = 56;
   const STRIP_H  = PAD + (PHOTO_H + GAP) * 3 - GAP + PAD + BOTTOM;
 
   stripCanvas.width  = STRIP_W;
