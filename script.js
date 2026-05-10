@@ -720,6 +720,10 @@
 
 // ───────────────── STATE ─────────────────
 
+// ════════════════════════════════════════════════
+// SnapTogether — FULL FIXED script.js
+// ════════════════════════════════════════════════
+
 let peer = null;
 let conn = null;
 let mediaConn = null;
@@ -752,11 +756,13 @@ let localMaskCtx = null;
 let segCanvas = null;
 let segCtx = null;
 
-// canvas sizes
+// sizes
 const FULL_W = 960;
 const FULL_H = 540;
 
-// ───────────────── DOM ─────────────────
+// ════════════════════════════════════════════════
+// DOM
+// ════════════════════════════════════════════════
 
 const $ = id => document.getElementById(id);
 
@@ -780,6 +786,10 @@ const soloBtn = $("soloBtn");
 
 const localVideo = $("localVideo");
 const remoteVideo = $("remoteVideo");
+
+remoteVideo.autoplay = true;
+remoteVideo.playsInline = true;
+remoteVideo.muted = true;
 
 const previewCanvas = $("previewCanvas");
 
@@ -814,7 +824,9 @@ const bgHint = $("bgHint");
 
 const toast = $("toast");
 
-// ───────────────── HELPERS ─────────────────
+// ════════════════════════════════════════════════
+// HELPERS
+// ════════════════════════════════════════════════
 
 function sleep(ms) {
   return new Promise(r => setTimeout(r, ms));
@@ -834,7 +846,6 @@ function showScreen(id) {
 
 function showToast(text) {
   toast.innerText = text;
-
   toast.classList.add("show");
 
   setTimeout(() => {
@@ -851,7 +862,9 @@ function updateCaptureBtn() {
   captureBtn.disabled = !(isSolo || bestieConnected);
 }
 
-// ───────────────── TABS ─────────────────
+// ════════════════════════════════════════════════
+// TABS
+// ════════════════════════════════════════════════
 
 document.querySelectorAll(".tab-btn").forEach(btn => {
 
@@ -873,7 +886,9 @@ document.querySelectorAll(".tab-btn").forEach(btn => {
 
 });
 
-// ───────────────── CAMERA ─────────────────
+// ════════════════════════════════════════════════
+// CAMERA
+// ════════════════════════════════════════════════
 
 async function startCamera() {
 
@@ -888,7 +903,9 @@ async function startCamera() {
 
 }
 
-// ───────────────── SEGMENTATION ─────────────────
+// ════════════════════════════════════════════════
+// SEGMENTATION
+// ════════════════════════════════════════════════
 
 function initSegmentation() {
 
@@ -951,7 +968,9 @@ function initSegmentation() {
 
 }
 
-// ───────────────── BACKGROUNDS ─────────────────
+// ════════════════════════════════════════════════
+// BACKGROUNDS
+// ════════════════════════════════════════════════
 
 const BG_RENDERERS = {
 
@@ -976,34 +995,39 @@ const BG_RENDERERS = {
   },
 
   cream: (ctx, w, h) => {
-
     ctx.fillStyle = "#efe3d2";
     ctx.fillRect(0, 0, w, h);
-
   },
 
   sage: (ctx, w, h) => {
-
     ctx.fillStyle = "#9caf9a";
     ctx.fillRect(0, 0, w, h);
-
   },
 
   black: (ctx, w, h) => {
-
     ctx.fillStyle = "#111";
     ctx.fillRect(0, 0, w, h);
-
   }
 
 };
 
-// ───────────────── CUTOUTS ─────────────────
+// ════════════════════════════════════════════════
+// CUTOUTS
+// ════════════════════════════════════════════════
 
 function drawLocalCutout(ctx, dx, dy, dw, dh) {
 
   if (!segmentationReady) {
-    ctx.drawImage(localVideo, dx, dy, dw, dh);
+
+    ctx.save();
+
+    ctx.translate(dx + dw, dy);
+    ctx.scale(-1, 1);
+
+    ctx.drawImage(localVideo, 0, 0, dw, dh);
+
+    ctx.restore();
+
     return;
   }
 
@@ -1039,12 +1063,10 @@ function drawRemoteCutout(ctx, dx, dy, dw, dh) {
 
   ctx.save();
 
-  // soft shadow behind person
   ctx.shadowColor = "rgba(0,0,0,0.18)";
   ctx.shadowBlur = 25;
   ctx.shadowOffsetY = 8;
 
-  // draw remote video normally
   ctx.drawImage(
     remoteVideo,
     dx,
@@ -1057,7 +1079,9 @@ function drawRemoteCutout(ctx, dx, dy, dw, dh) {
 
 }
 
-// ───────────────── PREVIEW LOOP ─────────────────
+// ════════════════════════════════════════════════
+// PREVIEW LOOP
+// ════════════════════════════════════════════════
 
 function startPreviewLoop() {
 
@@ -1087,23 +1111,27 @@ function startPreviewLoop() {
       ctx.filter = currentFilter;
     }
 
-    // remote
-   drawRemoteCutout(
-  ctx,
-  FULL_W * 0.38,
-  20,
-  FULL_W * 0.48,
-  FULL_H * 0.92
-);
+    // REMOTE
+    if (remoteVideo.readyState >= 2) {
 
-    // local
-   drawLocalCutout(
-  ctx,
-  -20,
-  20,
-  FULL_W * 0.58,
-  FULL_H * 0.92
-);
+      drawRemoteCutout(
+        ctx,
+        FULL_W * 0.38,
+        20,
+        FULL_W * 0.48,
+        FULL_H * 0.92
+      );
+
+    }
+
+    // LOCAL
+    drawLocalCutout(
+      ctx,
+      -20,
+      20,
+      FULL_W * 0.58,
+      FULL_H * 0.92
+    );
 
     ctx.filter = "none";
 
@@ -1130,7 +1158,9 @@ function startPreviewLoop() {
 
 }
 
-// ───────────────── EFFECTS ─────────────────
+// ════════════════════════════════════════════════
+// EFFECTS
+// ════════════════════════════════════════════════
 
 function drawVignette(ctx) {
 
@@ -1166,7 +1196,9 @@ function showCountdown(num) {
   countdownOverlay.innerText = num || "";
 }
 
-// ───────────────── CAPTURE ─────────────────
+// ════════════════════════════════════════════════
+// CAPTURE
+// ════════════════════════════════════════════════
 
 function captureComposite() {
 
@@ -1190,35 +1222,27 @@ function captureComposite() {
     ctx.filter = currentFilter;
   }
 
-  drawRemoteCutout(
-    ctx,
-    FULL_W * 0.42,
-    20,
-    FULL_W * 0.42,
-    FULL_H * 0.92
-  );
+  if (remoteVideo.readyState >= 2) {
+
+    drawRemoteCutout(
+      ctx,
+      FULL_W * 0.38,
+      20,
+      FULL_W * 0.48,
+      FULL_H * 0.92
+    );
+
+  }
 
   drawLocalCutout(
     ctx,
-    FULL_W * 0.05,
+    -20,
     20,
-    FULL_W * 0.5,
+    FULL_W * 0.58,
     FULL_H * 0.92
   );
 
   ctx.filter = "none";
-
-  stickers.forEach(s => {
-
-    ctx.font = "50px serif";
-
-    ctx.fillText(
-      s.emoji,
-      s.x * FULL_W,
-      s.y * FULL_H
-    );
-
-  });
 
   drawVignette(ctx);
 
@@ -1226,7 +1250,9 @@ function captureComposite() {
 
 }
 
-// ───────────────── STRIP ─────────────────
+// ════════════════════════════════════════════════
+// STRIP
+// ════════════════════════════════════════════════
 
 captureBtn.addEventListener("click", async () => {
 
@@ -1331,7 +1357,9 @@ function loadImage(src) {
 
 }
 
-// ───────────────── FILTERS ─────────────────
+// ════════════════════════════════════════════════
+// FILTERS
+// ════════════════════════════════════════════════
 
 document.querySelectorAll(".filter-pill").forEach(btn => {
 
@@ -1349,7 +1377,9 @@ document.querySelectorAll(".filter-pill").forEach(btn => {
 
 });
 
-// ───────────────── BACKGROUNDS ─────────────────
+// ════════════════════════════════════════════════
+// BACKGROUNDS
+// ════════════════════════════════════════════════
 
 document.querySelectorAll(".bg-pill").forEach(btn => {
 
@@ -1380,7 +1410,9 @@ document.querySelectorAll(".bg-pill").forEach(btn => {
 
 });
 
-// ───────────────── STICKERS ─────────────────
+// ════════════════════════════════════════════════
+// STICKERS
+// ════════════════════════════════════════════════
 
 document.querySelectorAll(".sticker-btn").forEach(btn => {
 
@@ -1404,7 +1436,9 @@ clearStickersBtn.addEventListener("click", () => {
   stickers = [];
 });
 
-// ───────────────── PEER ─────────────────
+// ════════════════════════════════════════════════
+// PEER HELPERS
+// ════════════════════════════════════════════════
 
 function generateCode() {
 
@@ -1425,7 +1459,46 @@ function generateCode() {
 
 }
 
-// create room
+function setupDataConnection() {
+
+  conn.on("open", () => {
+
+    conn.send({
+      type: "hello",
+      name: myName
+    });
+
+  });
+
+  conn.on("data", data => {
+
+    if (data.type === "hello") {
+
+      remoteName = data.name;
+
+      remoteLabel.innerText = remoteName;
+
+      bestieConnected = true;
+
+      updateCaptureBtn();
+
+      setConnStatus(
+        "connected",
+        `${remoteName} connected`
+      );
+
+      showToast(`${remoteName} joined ✨`);
+
+    }
+
+  });
+
+}
+
+// ════════════════════════════════════════════════
+// CREATE ROOM
+// ════════════════════════════════════════════════
+
 createRoomBtn.addEventListener("click", async () => {
 
   await startCamera();
@@ -1467,13 +1540,25 @@ createRoomBtn.addEventListener("click", async () => {
 
     call.answer(localStream);
 
-    call.on("stream", stream => {
+    call.on("stream", async stream => {
+
+      console.log("REMOTE STREAM RECEIVED");
 
       remoteStream = stream;
 
       remoteVideo.srcObject = stream;
 
-      remoteVideo.play();
+      try {
+
+        await remoteVideo.play();
+
+        console.log("REMOTE VIDEO PLAYING");
+
+      } catch(err) {
+
+        console.error(err);
+
+      }
 
     });
 
@@ -1481,7 +1566,10 @@ createRoomBtn.addEventListener("click", async () => {
 
 });
 
-// join room
+// ════════════════════════════════════════════════
+// JOIN ROOM
+// ════════════════════════════════════════════════
+
 joinRoomBtn.addEventListener("click", async () => {
 
   const code = joinCodeInput.value.trim();
@@ -1498,13 +1586,25 @@ joinRoomBtn.addEventListener("click", async () => {
 
     mediaConn = peer.call(code, localStream);
 
-    mediaConn.on("stream", stream => {
+    mediaConn.on("stream", async stream => {
+
+      console.log("REMOTE STREAM RECEIVED");
 
       remoteStream = stream;
 
       remoteVideo.srcObject = stream;
 
-      remoteVideo.play();
+      try {
+
+        await remoteVideo.play();
+
+        console.log("REMOTE VIDEO PLAYING");
+
+      } catch(err) {
+
+        console.error(err);
+
+      }
 
     });
 
@@ -1516,45 +1616,9 @@ joinRoomBtn.addEventListener("click", async () => {
 
 });
 
-function setupDataConnection() {
-
-  conn.on("open", () => {
-
-    conn.send({
-      type: "hello",
-      name: myName
-    });
-
-  });
-
-  conn.on("data", data => {
-
-    if (data.type === "hello") {
-
-      remoteName = data.name;
-
-      remoteLabel.innerText = remoteName;
-
-      bestieConnected = true;
-
-      updateCaptureBtn();
-
-      setConnStatus(
-        "connected",
-        `${remoteName} connected`
-      );
-
-      showToast(
-        `${remoteName} joined ✨`
-      );
-
-    }
-
-  });
-
-}
-
-// ───────────────── SOLO ─────────────────
+// ════════════════════════════════════════════════
+// SOLO
+// ════════════════════════════════════════════════
 
 soloBtn.addEventListener("click", async () => {
 
@@ -1568,7 +1632,9 @@ soloBtn.addEventListener("click", async () => {
 
 });
 
-// ───────────────── RETAKE ─────────────────
+// ════════════════════════════════════════════════
+// RETAKE
+// ════════════════════════════════════════════════
 
 retakeBtn.addEventListener("click", () => {
 
@@ -1576,7 +1642,9 @@ retakeBtn.addEventListener("click", () => {
 
 });
 
-// ───────────────── LEAVE ─────────────────
+// ════════════════════════════════════════════════
+// LEAVE
+// ════════════════════════════════════════════════
 
 leaveBtn.addEventListener("click", () => {
 
@@ -1592,7 +1660,9 @@ leaveBtn.addEventListener("click", () => {
 
 });
 
-// ───────────────── COPY ─────────────────
+// ════════════════════════════════════════════════
+// COPY
+// ════════════════════════════════════════════════
 
 copyCodeBtn.addEventListener("click", async () => {
 
