@@ -27,11 +27,11 @@ let segCtx = null;
 // ── Background renderers — solid curtain colours ──────────────────────────────
 const BG_RENDERERS = {
   none:   null,
-  cafe:   (ctx, w, h) => { ctx.fillStyle = '#c9a96e'; ctx.fillRect(0, 0, w, h); },   // warm tan
-  beach:  (ctx, w, h) => { ctx.fillStyle = '#6eb5c9'; ctx.fillRect(0, 0, w, h); },   // sky blue
-  night:  (ctx, w, h) => { ctx.fillStyle = '#2c2c54'; ctx.fillRect(0, 0, w, h); },   // deep navy
-  forest: (ctx, w, h) => { ctx.fillStyle = '#4a7c59'; ctx.fillRect(0, 0, w, h); },   // forest green
-  space:  (ctx, w, h) => { ctx.fillStyle = '#1a1a2e'; ctx.fillRect(0, 0, w, h); },   // near-black
+  blush:  (ctx, w, h) => { ctx.fillStyle = '#e8b4b8'; ctx.fillRect(0, 0, w, h); },  // dusty pink
+  sage:   (ctx, w, h) => { ctx.fillStyle = '#8aab96'; ctx.fillRect(0, 0, w, h); },  // sage green
+  navy:   (ctx, w, h) => { ctx.fillStyle = '#2c3e6b'; ctx.fillRect(0, 0, w, h); },  // deep navy
+  cream:  (ctx, w, h) => { ctx.fillStyle = '#f0e6d3'; ctx.fillRect(0, 0, w, h); },  // warm cream
+  black:  (ctx, w, h) => { ctx.fillStyle = '#1a1a1a'; ctx.fillRect(0, 0, w, h); },  // classic black
 };
 
 // Canvas resolution
