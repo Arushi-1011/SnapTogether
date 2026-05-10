@@ -275,14 +275,14 @@ function drawRemoteCutout(ctx, dx, dy, dw, dh) {
 // ── Background renderers — solid curtain colours ──────────────────────────────
 // Each is just a flat fill — clean, like a real photobooth backdrop.
 
-const BG_RENDERERS = {
-  none:   null,
-  blush:  (ctx, w, h) => { ctx.fillStyle = '#e8b4b8'; ctx.fillRect(0, 0, w, h); },  // dusty pink
-  sage:   (ctx, w, h) => { ctx.fillStyle = '#8aab96'; ctx.fillRect(0, 0, w, h); },  // sage green
-  navy:   (ctx, w, h) => { ctx.fillStyle = '#2c3e6b'; ctx.fillRect(0, 0, w, h); },  // deep navy
-  cream:  (ctx, w, h) => { ctx.fillStyle = '#f0e6d3'; ctx.fillRect(0, 0, w, h); },  // warm cream
-  black:  (ctx, w, h) => { ctx.fillStyle = '#1a1a1a'; ctx.fillRect(0, 0, w, h); },  // classic black
-};
+// const BG_RENDERERS = {
+//   none:   null,
+//   blush:  (ctx, w, h) => { ctx.fillStyle = '#e8b4b8'; ctx.fillRect(0, 0, w, h); },  // dusty pink
+//   sage:   (ctx, w, h) => { ctx.fillStyle = '#8aab96'; ctx.fillRect(0, 0, w, h); },  // sage green
+//   navy:   (ctx, w, h) => { ctx.fillStyle = '#2c3e6b'; ctx.fillRect(0, 0, w, h); },  // deep navy
+//   cream:  (ctx, w, h) => { ctx.fillStyle = '#f0e6d3'; ctx.fillRect(0, 0, w, h); },  // warm cream
+//   black:  (ctx, w, h) => { ctx.fillStyle = '#1a1a1a'; ctx.fillRect(0, 0, w, h); },  // classic black
+// };
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // COMPOSITE PREVIEW LOOP
