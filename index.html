@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
@@ -12,7 +12,7 @@
 <body>
 
   <!-- ── Lobby ── -->
-  <div id="lobby" class="screen active">
+  <!--<div id="lobby" class="screen active">
     <div class="lobby-inner">
       <div class="logo">
         <span class="logo-icon">📸</span>
@@ -48,7 +48,7 @@
   </div>
 
   <!-- ── Booth ── -->
-  <div id="booth" class="screen">
+  <!--<div id="booth" class="screen">
     <header class="booth-header">
       <div class="booth-title">📸 SnapTogether</div>
       <div class="booth-meta">
@@ -64,7 +64,7 @@
     <main class="booth-main">
 
       <!-- Composite preview canvas (the "shared room") -->
-      <div class="preview-column">
+     <!-- <div class="preview-column">
         <div class="preview-wrap" id="previewWrap">
           <canvas id="previewCanvas"></canvas>
           <div id="countdownOverlay" class="countdown-overlay"></div>
@@ -77,7 +77,7 @@
       </div>
 
       <!-- Controls -->
-      <aside class="controls-column">
+     <!-- <aside class="controls-column">
 
         <div class="filter-group">
           <p class="control-label">Filter</p>
@@ -140,7 +140,7 @@
   </div>
 
   <!-- ── Result ── -->
-  <div id="result" class="screen">
+  <!--<div id="result" class="screen">
     <div class="result-inner">
       <h2 class="result-title">Your Strip 💕</h2>
       <div class="strip-frame">
@@ -154,7 +154,7 @@
   </div>
 
   <!-- Hidden video elements — sources for canvas compositing -->
-  <video id="localVideo"  autoplay muted playsinline style="display:none"></video>
+  <!--<video id="localVideo"  autoplay muted playsinline style="display:none"></video>
   <video id="remoteVideo" autoplay       playsinline style="display:none"></video>
 
   <div id="toast" class="toast" aria-live="polite"></div>
@@ -163,5 +163,335 @@
   <script src="https://cdn.jsdelivr.net/npm/@mediapipe/selfie_segmentation/selfie_segmentation.js" crossorigin="anonymous"></script>
   <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
   <script src="script.js"></script>
+</body>
+</html> -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SnapTogether 📸</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <!-- ───────────────── LOBBY ───────────────── -->
+  <section id="lobby" class="screen active">
+
+    <div class="lobby-card">
+
+      <div class="logo-wrap">
+        <h1>SnapTogether 💕</h1>
+        <p>a virtual photobooth for long distance besties</p>
+      </div>
+
+      <div class="tabs">
+        <button class="tab-btn active" data-tab="create">
+          Create Room
+        </button>
+
+        <button class="tab-btn" data-tab="join">
+          Join Room
+        </button>
+      </div>
+
+      <!-- CREATE -->
+      <div id="tab-create" class="tab-panel active">
+
+        <input
+          type="text"
+          id="yourNameCreate"
+          placeholder="Your name"
+          maxlength="20"
+        >
+
+        <button id="createRoomBtn" class="btn-primary">
+          Open the Booth ✨
+        </button>
+
+        <div id="roomCodeDisplay" class="room-box hidden">
+          <span class="room-label">ROOM CODE</span>
+
+          <div class="room-row">
+            <span id="roomCodeText"></span>
+
+            <button id="copyCodeBtn">
+              Copy
+            </button>
+          </div>
+        </div>
+
+        <p id="waitingMsg" class="waiting hidden">
+          waiting for your bestie 🌸
+        </p>
+
+      </div>
+
+      <!-- JOIN -->
+      <div id="tab-join" class="tab-panel">
+
+        <input
+          type="text"
+          id="yourNameJoin"
+          placeholder="Your name"
+          maxlength="20"
+        >
+
+        <input
+          type="text"
+          id="joinCodeInput"
+          placeholder="Enter room code"
+          maxlength="20"
+        >
+
+        <button id="joinRoomBtn" class="btn-primary">
+          Join the Booth 💌
+        </button>
+
+      </div>
+
+      <p id="lobbyStatus"></p>
+
+      <button id="soloBtn" class="solo-btn">
+        Use Solo Mode →
+      </button>
+
+    </div>
+
+  </section>
+
+  <!-- ───────────────── BOOTH ───────────────── -->
+  <section id="booth" class="screen">
+
+    <!-- HEADER -->
+    <header class="booth-header">
+
+      <div class="header-left">
+        <h2>📸 SnapTogether</h2>
+      </div>
+
+      <div class="header-right">
+
+        <div id="connStatus" class="conn-status waiting">
+          <span class="dot"></span>
+          <span id="connLabel">connecting...</span>
+        </div>
+
+        <span id="roomBadge"></span>
+
+        <button id="leaveBtn" class="leave-btn">
+          ✕
+        </button>
+
+      </div>
+
+    </header>
+
+    <!-- MAIN -->
+    <main class="booth-main">
+
+      <!-- PREVIEW -->
+      <div class="preview-area">
+
+        <div class="preview-wrap">
+
+          <canvas id="previewCanvas"></canvas>
+
+          <div id="countdownOverlay"></div>
+
+          <div id="flashOverlay"></div>
+
+        </div>
+
+        <div class="preview-labels">
+          <span id="myLabel">You</span>
+          <span id="remoteLabel">Bestie</span>
+        </div>
+
+      </div>
+
+      <!-- SIDEBAR -->
+      <aside class="sidebar">
+
+        <!-- FILTERS -->
+        <div class="sidebar-group">
+
+          <p class="group-title">FILTERS</p>
+
+          <div class="filter-grid">
+
+            <button class="filter-pill active" data-filter="none">
+              Normal
+            </button>
+
+            <button class="filter-pill" data-filter="grayscale(100%)">
+              B&W
+            </button>
+
+            <button class="filter-pill" data-filter="sepia(90%)">
+              Vintage
+            </button>
+
+            <button class="filter-pill" data-filter="contrast(140%) saturate(120%)">
+              Pop
+            </button>
+
+            <button class="filter-pill" data-filter="brightness(1.1) saturate(0.8)">
+              Soft
+            </button>
+
+          </div>
+
+        </div>
+
+        <!-- BACKGROUNDS -->
+        <div class="sidebar-group">
+
+          <p class="group-title">BACKGROUNDS</p>
+
+          <div class="bg-grid">
+
+            <button class="bg-pill active" data-bg="none">
+              Off
+            </button>
+
+            <button class="bg-pill" data-bg="blush">
+              🌸 Blush
+            </button>
+
+            <button class="bg-pill" data-bg="cream">
+              ☁ Cream
+            </button>
+
+            <button class="bg-pill" data-bg="sage">
+              🌿 Sage
+            </button>
+
+            <button class="bg-pill" data-bg="black">
+              🖤 Noir
+            </button>
+
+          </div>
+
+          <p id="bgHint"></p>
+
+        </div>
+
+        <!-- STICKERS -->
+        <div class="sidebar-group">
+
+          <p class="group-title">STICKERS</p>
+
+          <div class="sticker-grid">
+
+            <button class="sticker-btn" data-sticker="💕">💕</button>
+            <button class="sticker-btn" data-sticker="🌸">🌸</button>
+            <button class="sticker-btn" data-sticker="✨">✨</button>
+            <button class="sticker-btn" data-sticker="🎀">🎀</button>
+            <button class="sticker-btn" data-sticker="⭐">⭐</button>
+            <button class="sticker-btn" data-sticker="🦋">🦋</button>
+
+          </div>
+
+          <button id="clearStickersBtn" class="ghost-btn">
+            Clear
+          </button>
+
+        </div>
+
+        <!-- CAPTION -->
+        <div class="sidebar-group">
+
+          <p class="group-title">CAPTION</p>
+
+          <input
+            type="text"
+            id="captionInput"
+            placeholder="write something cute..."
+            maxlength="60"
+          >
+
+        </div>
+
+        <!-- CAPTURE -->
+        <button id="captureBtn" class="capture-btn" disabled>
+          ◉ TAKE STRIP
+        </button>
+
+        <p id="captureStatus"></p>
+
+      </aside>
+
+    </main>
+
+  </section>
+
+  <!-- ───────────────── RESULT ───────────────── -->
+  <section id="result" class="screen">
+
+    <div class="result-wrap">
+
+      <h2>Your Strip 💕</h2>
+
+      <div class="strip-frame">
+        <canvas id="stripCanvas"></canvas>
+      </div>
+
+      <div class="result-actions">
+
+        <a
+          id="downloadBtn"
+          download="snaptogether-strip.png"
+          class="btn-primary"
+        >
+          Download
+        </a>
+
+        <button id="retakeBtn" class="ghost-btn">
+          Retake
+        </button>
+
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- HIDDEN VIDEO ELEMENTS -->
+  <video
+    id="localVideo"
+    autoplay
+    muted
+    playsinline
+    style="display:none"
+  ></video>
+
+  <video
+    id="remoteVideo"
+    autoplay
+    playsinline
+    style="display:none"
+  ></video>
+
+  <!-- UTIL -->
+  <canvas id="captureCanvas" style="display:none"></canvas>
+
+  <div id="toast"></div>
+
+  <!-- LIBRARIES -->
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/selfie_segmentation/selfie_segmentation.js"></script>
+
+  <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+
+  <!-- SCRIPT -->
+  <script src="script.js"></script>
+
 </body>
 </html>
