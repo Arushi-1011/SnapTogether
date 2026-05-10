@@ -111,9 +111,22 @@
           <input type="text" id="captionInput" placeholder="Write something cute…" maxlength="60"/>
         </div>
 
+        <div class="bg-group">
+          <p class="control-label">Background</p>
+          <div class="bg-pills">
+            <button class="bg-pill active" data-bg="none">Off</button>
+            <button class="bg-pill" data-bg="blush">🌸 Blush</button>
+            <button class="bg-pill" data-bg="sage">🌿 Sage</button>
+            <button class="bg-pill" data-bg="navy">🌊 Navy</button>
+            <button class="bg-pill" data-bg="cream">☀️ Cream</button>
+            <button class="bg-pill" data-bg="black">🖤 Black</button>
+          </div>
+          <p class="bg-hint" id="bgHint"></p>
+        </div>
+
         <div class="strip-info">
           <p class="control-label">Strip</p>
-          <p class="strip-desc">3 photos, together in one frame — like a real booth.</p>
+          <p class="strip-desc">3 photos, together in one place — like a real booth.</p>
         </div>
 
         <button class="btn-shutter" id="captureBtn" disabled>
@@ -147,6 +160,7 @@
   <div id="toast" class="toast" aria-live="polite"></div>
   <canvas id="captureCanvas" style="display:none;"></canvas>
 
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/selfie_segmentation/selfie_segmentation.js" crossorigin="anonymous"></script>
   <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
   <script src="script.js"></script>
 </body>
