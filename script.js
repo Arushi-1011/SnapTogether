@@ -1033,38 +1033,27 @@ function drawLocalCutout(ctx, dx, dy, dw, dh) {
 
 function drawRemoteCutout(ctx, dx, dy, dw, dh) {
 
-  if (!remoteVideo.srcObject || remoteVideo.readyState < 2) return;
-
-  const temp = document.createElement("canvas");
-
-  temp.width = dw;
-  temp.height = dh;
-
-  const tctx = temp.getContext("2d");
-
-  tctx.drawImage(remoteVideo, 0, 0, dw, dh);
-
-  const imgData = tctx.getImageData(0, 0, dw, dh);
-
-  const data = imgData.data;
-
-  for (let i = 0; i < data.length; i += 4) {
-
-    const r = data[i];
-    const g = data[i + 1];
-    const b = data[i + 2];
-
-    const brightness = (r + g + b) / 3;
-
-    if (brightness > 210) {
-      data[i + 3] = 0;
-    }
-
+  if (!remoteVideo.srcObject || remoteVideo.readyState < 2) {
+    return;
   }
 
-  tctx.putImageData(imgData, 0, 0);
+  ctx.save();
 
-  ctx.drawImage(temp, dx, dy, dw, dh);
+  // soft shadow behind person
+  ctx.shadowColor = "rgba(0,0,0,0.18)";
+  ctx.shadowBlur = 25;
+  ctx.shadowOffsetY = 8;
+
+  // draw remote video normally
+  ctx.drawImage(
+    remoteVideo,
+    dx,
+    dy,
+    dw,
+    dh
+  );
+
+  ctx.restore();
 
 }
 
@@ -1099,22 +1088,22 @@ function startPreviewLoop() {
     }
 
     // remote
-    drawRemoteCutout(
-      ctx,
-      FULL_W * 0.42,
-      20,
-      FULL_W * 0.42,
-      FULL_H * 0.92
-    );
+   drawRemoteCutout(
+  ctx,
+  FULL_W * 0.38,
+  20,
+  FULL_W * 0.48,
+  FULL_H * 0.92
+);
 
     // local
-    drawLocalCutout(
-      ctx,
-      FULL_W * 0.05,
-      20,
-      FULL_W * 0.5,
-      FULL_H * 0.92
-    );
+   drawLocalCutout(
+  ctx,
+  -20,
+  20,
+  FULL_W * 0.58,
+  FULL_H * 0.92
+);
 
     ctx.filter = "none";
 
